@@ -1,0 +1,37 @@
+{
+  "name": "vue3-vite-typescript-starter",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint --ext .ts,vue --ignore-path .gitignore . --fix",
+    "format": "prettier -w -u .",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "@types/node": "^16.7.1",
+    "@vitejs/plugin-vue": "^1.6.0",
+    "@vue/compiler-sfc": "^3.0.5",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^7.17.0",
+    "prettier": "^2.3.2",
+    "sass": "^1.43.4",
+    "typescript": "^4.3.2",
+    "vite": "^2.5.1",
+    "vue-tsc": "^0.2.2"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

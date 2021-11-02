@@ -1,0 +1,32 @@
+@import "../tools/mixins.scss";
+
+// Variables root
+// =============
+:root {
+  --color-dark: #000;
+  --color: #121c42;
+  --color-light: #5d637f;
+  --background: #f7fafb;
+  --background-light: #fff;
+  --contrast: #4869ee;
+  --red: #f25353;
+  --transparent: #{rgba(#121c42, 0.1)};
+  --gap: 20px;
+  --space: 10px;
+  --sizeicon-mini: 18px;
+  --sizeicon-small: 24px;
+  --sizeicon-normal: 32px;
+  --sizeicon-large: 62px;
+}
+// Dark mode
+// =============
+@include dark {
+  --color-dark: #f0f3ff;
+  --color: #d4dcff;
+  --color-light: #717baa;
+  --background: #171933;
+  --background-light: #1b1e3d;
+  --contrast: #5396e7;
+  --red: #A6333F;
+  --transparent: #{rgba(#8491c7, 0.1)};
+}

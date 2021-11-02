@@ -1,0 +1,40 @@
+// Chain
+// ==================
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+// Spacing
+// ==================
+@function space($i) {
+  @return calc(#{$i} * var(--space));
+}
+
+// Typography
+// ==================
+$base-font-size: 16 !default;
+@function em($pixels, $context: $base-font-size) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+
+  @return $pixels / $context * 1em;
+}
+
+@function rem($pixels, $context: $base-font-size) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+
+  @return $pixels / $context * 1em;
+}

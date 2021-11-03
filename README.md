@@ -15,14 +15,15 @@ _Simple starter template for developing Vue 3 app with some often used features_
 
 ## 📦️ Features
 
-- Vue 3 (Composition API)
-- Vite
+- VueJs (Composition API) `vuejs3`
+- ViteJs
 - Typescript support
 - Routing via `vue-router`
 - ESLint + Prettier
 - Axios
-- Vuex
-- SCSS/SASS support
+- Vuex `vuex4`
+- Scss/Sass support
+- Cypress.io e2e tests
 - More soon…
 
 
@@ -41,44 +42,34 @@ yarn
 ```
 
 
-## 🥑 Usage
+## 🥑 Usage / Get Started
 
-
-#### Compiles & hot-reloads for development
 
 ```bash
+# Compiles & hot-reloads for development
 # npm run dev
-yarn dev
+yarn dev  
+
 # Or Vite preview
-yarn serve
-```
+# npm run serve
+yarn serve 
 
-#### Build & minifies for production
-
-```bash
+# Build & minifies for production
 # npm run build
-yarn build
-```
+yarn build 
 
-
-#### Lints & fixes files
-
-```bash
+# Lints & fixes files
 # npm run lint
-yarn lint
-```
+yarn lint 
 
-#### Prettier & format files
-
-```bash
+# Prettier & format files
 # npm run format
-yarn format
+yarn format 
 ```
 
 #### Goto application
 
 App running at on [localhost](http://localhost:3000)
-
 
 
 ---
@@ -87,7 +78,28 @@ App running at on [localhost](http://localhost:3000)
 
 ## 🧐 Tests
 
-_🚧 Coming soon… (cypress ?)_
+Testing E2E, with integrations, plugins & components:
+
+```bash
+# Install cypress
+yarn e2e:install
+
+# Run E2E tests integrations
+yarn e2e:run # headless
+yarn e2e:open # Open Gui Browser
+
+# Run E2E tests components
+yarn e2e:run-ct # headless
+yarn e2e:open-ct # Open Gui Browser
+```
+
+![Screen Cypress][screen-cypress]
+
+
+
+---
+
+
 
 
 ## 🐞 Bugs & contributing
@@ -115,5 +127,6 @@ Originally written & currently maintained by [@Sp0ne][vinces] © 2021
 
 [vinces]: https://vinces.io
 [screen]: public/images/screen-starter.gif
+[screen-cypress]: public/images/screen-starter-cypress.png
 [docs-github-api]: https://docs.github.com/en/rest/reference/repos#list-repositories-for-a-user
 

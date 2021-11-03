@@ -16,10 +16,7 @@
           </a>
         </h4>
         <p>{{ currentRepository.description }}</p>
-        <p>
-          {{ currentRepository.open_issues_count }} Issues,
-          {{ currentRepository.forks_count }} Forks
-        </p>
+        <p>{{ currentRepository.open_issues_count }} Issues, {{ currentRepository.forks_count }} Forks</p>
       </div>
     </div>
     <p v-else>No info for this repository</p>

@@ -1,0 +1,18 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "integrationFolder": "tests/e2e/integration",
+  "pluginsFile": "tests/e2e/plugins/index.ts",
+  "supportFile": "tests/e2e/support/index.ts",
+  "component": {
+    "componentFolder": "src",
+    "testFiles": "**/*spec.ts"
+  },
+  "fixturesFolder": false,
+  "screenshotOnRunFailure": false,
+  "video": false,
+  "execTimeout": 60000,
+  "taskTimeout": 60000,
+  "pageLoadTimeout": 60000,
+  "requestTimeout": 5000,
+  "responseTimeout": 30000
+}

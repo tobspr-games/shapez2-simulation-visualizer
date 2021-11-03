@@ -1,6 +1,8 @@
 {
   "name": "vue3-vite-typescript-starter",
   "version": "0.0.1",
+  "private": false,
+  "description": "Simple starter template for developing Vue 3 app with some often used features",
   "scripts": {
     "dev": "vite",
     "lint": "eslint --ext .ts,vue --ignore-path .gitignore . --fix",
@@ -9,6 +11,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "vue": "^3.2.6",
     "vue-router": "^4.0.11",
     "vuex": "^4.0.2"

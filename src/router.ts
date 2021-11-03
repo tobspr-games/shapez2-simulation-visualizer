@@ -6,12 +6,17 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     alias: "/home",
     name: "Home",
-    component: () => import("@/page/Home.vue"),
+    component: () => import("@/pages/Home.vue"),
+  },
+  {
+    path: "/axios",
+    name: "Axios",
+    component: () => import("@/pages/Axios.vue"),
   },
   {
     path: "/about",
     name: "About",
-    component: () => import("@/page/About.vue"),
+    component: () => import("@/pages/About.vue"),
   },
 ];
 

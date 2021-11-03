@@ -7,6 +7,7 @@
 body {
   color: var(--color);
   background: var(--background);
+  line-height: 1;
   &.light-theme{
     background: var(--background);
   }
@@ -54,6 +55,15 @@ h3 {
   font-family: Rubik-Medium, sans-serif;
 }
 
+h4 {
+  font-weight: 700;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 10px 0;
+  font-family: Rubik-Medium, sans-serif;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
@@ -74,5 +84,48 @@ a {
 }
 
 p {
+  line-height: 1.2;
   margin: 10px 0;
+}
+
+code {
+  background-color: var(--contrast);
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.125rem;
+  color: var(--color);
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  &__content {
+    //height: 100%;
+    padding: var(--gap) 0;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.page {
+  min-height: calc(100vh - 56px - 52px - 40px);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }

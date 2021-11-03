@@ -1,11 +1,30 @@
 # Vue3 + Vite + Typescript Starter
 
-_Simple fast starter for developing with Vue 3 and Typescript in Vite. (With Lint & Prettier tools)_
+_Simple starter template for developing Vue 3 app with some often used features_
 
-💻 Vue 3 | Vite | Typescript | ESLint | Prettier.
+💻 Vue 3 | Vite | Typescript | Vuex | ESLint | Prettier | Axios.
 
 
 ![Screen Starter][screen]
+
+
+
+---
+
+
+
+## 📦️ Features
+
+- Vue 3 (Composition API)
+- Vite
+- Typescript support
+- Routing via `vue-router`
+- ESLint + Prettier
+- Axios
+- Vuex
+- SCSS/SASS support
+- More soon…
+
 
 
 ---
@@ -77,8 +96,6 @@ _🚧 Coming soon… (cypress ?)_
 
 The issue tracker is the preferred channel for bug reports, features requests and submitting pull requests.
 
-_🚧 Coming soon…_
-
 
 
 ---
@@ -97,5 +114,6 @@ Originally written & currently maintained by [@Sp0ne][vinces] © 2021
 
 
 [vinces]: https://vinces.io
-[screen]: doc/screen-starter.png
+[screen]: public/images/screen-starter.gif
+[docs-github-api]: https://docs.github.com/en/rest/reference/repos#list-repositories-for-a-user
 

@@ -1,4 +1,5 @@
 {
+  "useTabs": false,
   "tabWidth": 2,
   "semi": true,
   "singleQuote": false,
@@ -7,7 +8,7 @@
   "bracketSpacing": true,
   "jsxBracketSameLine": false,
   "arrowParens": "always",
-  "printWidth": 100,
+  "printWidth": 110,
   "endOfLine": "auto",
   "vueIndentScriptAndStyle": true
 }

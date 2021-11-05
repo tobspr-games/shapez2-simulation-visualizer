@@ -36,7 +36,11 @@
 
 <script lang="ts" setup>
   import { onMounted, reactive, ref } from "vue";
-  import ApiGithubService from "@/services/ApiGithubService";
+  import { container } from "@/services/inversify/inversify.config";
+  import { TYPES } from "@/services/inversify/type";
+  import { ApiGithubService as GithubService } from "@/services/ApiGithubService";
+
+  const ApiGithubService = container.get<GithubService>(TYPES.ApiGitHubService);
 
   const nameAuthor: any = ref("Sp0ne");
   const currentRepository: any = ref({});

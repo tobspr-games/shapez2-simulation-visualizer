@@ -1,6 +1,8 @@
 import http from "@/http-common";
 import RepoGithub from "@/types/RepoGithub";
+import { injectable } from "inversify";
 
+@injectable()
 class ApiGithubService {
   getOneRepository(username: string, repository: string): Promise<RepoGithub> {
     return http.get(`/repos/${username}/${repository}`);
@@ -21,4 +23,4 @@ class ApiGithubService {
   }
 }
 
-export default new ApiGithubService();
+export { ApiGithubService };

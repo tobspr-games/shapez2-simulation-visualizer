@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
+    "inversify": "^6.0.1",
+    "reflect-metadata": "^0.1.13",
     "vue": "^3.2.6",
     "vue-router": "^4.0.11",
     "vuex": "^4.0.2"

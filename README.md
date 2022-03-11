@@ -108,6 +108,14 @@ yarn e2e:open-ct # Open Gui Browser
 
 The issue tracker is the preferred channel for bug reports, features requests and submitting pull requests.
 
+**Special thanks to:**
+
+| 🔥                                   |
+|--------------------------------------|
+| [![picture][flo_img]][flo]           |
+| [🧙‍♂][flo] [⌨][flo_co] [🙏][flo_pr] |
+
+
 
 
 ---
@@ -115,9 +123,9 @@ The issue tracker is the preferred channel for bug reports, features requests an
 
 ## 🍭 Credits
 
-Originally written & currently maintained by [@Sp0ne][vinces] © 2021
+Originally written & currently maintained by [@Sp0ne][vinces-git] © 2021
 
-> _</💻> with ❤ by [@Sp0ne][vinces]. Have Fun 🍻_
+> </💻> with ❤ by **[@Sp0ne🧙‍♂][vinces]**. Have Fun 🍻
 
 
 
@@ -126,7 +134,12 @@ Originally written & currently maintained by [@Sp0ne][vinces] © 2021
 
 
 [vinces]: https://vinces.io
+[vinces-git]: https://github.com/Sp0ne
 [screen]: public/images/screen-starter.gif
 [screen-cypress]: public/images/screen-starter-cypress.png
 [docs-github-api]: https://docs.github.com/en/rest/reference/repos#list-repositories-for-a-user
 
+[flo]: https://github.com/floyoops
+[flo_img]: https://avatars.githubusercontent.com/u/2229520?s=60&v=4
+[flo_pr]: https://github.com/Sp0ne/vue3-vite-typescript-starter/pulls?q=is%3Apr+author%3Afloyoops
+[flo_co]: https://github.com/Sp0ne/vue3-vite-typescript-starter/commits?author=floyoops

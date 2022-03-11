@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+  import "reflect-metadata";
   import Navigation from "@/components/Navigation.vue";
   import Credits from "@/components/Credits.vue";
 </script>

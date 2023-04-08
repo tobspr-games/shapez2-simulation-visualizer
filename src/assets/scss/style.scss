@@ -1,13 +1,133 @@
 @import "./reset.scss";
 
+$pixelPerStep: 40px;
+$itemSize: 10;
+
+body {
+    background: #111;
+    color: #fff;
+}
+
 .main {
-  padding: 20px;
-  font-family: "Roboto", "Arial", sans-serif;
+    padding: 20px;
+    font-family: "Roboto", "Arial", sans-serif;
+}
+
+button {
+    padding: 4px 10px 3px 10px;
+    background: #000;
+    border-radius: 4px;
+    border: 1px solid #888;
+    color: #999;
+    text-transform: uppercase;
+    transition: color 0.2s ease-in-out;
+    &:hover {
+        color: #fff;
+    }
 }
 
 .simFrame {
-  width: 1500px;
-  height: 900px;
-  background: #eee;
-  border: 1px solid #ccc;
+    width: 1500px;
+    height: 500px;
+    background: #333;
+    border: 1px solid #555;
+    margin: 10px 0;
+    display: block;
+    position: relative;
+    border-radius: 4px;
+}
+
+h3 {
+    margin: 10px 0;
+}
+
+.beltLane {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+
+    height: 80px;
+    background: #555;
+    border-radius: 3px;
+    box-sizing: content-box;
+    border: 1px solid #000;
+
+    .tick {
+        position: absolute;
+        top: 20px;
+        border-left: 1px solid rgba(#fff, 0.8);
+        height: 60px;
+        padding-left: 3px;
+        font-size: 10px;
+        color: #fff;
+        width: $pixelPerStep;
+        background: rgba(#fff, 0.1);
+        overflow: visible;
+        white-space: nowrap;
+        z-index: 10;
+    }
+    .maxStep {
+        position: absolute;
+        top: 65px;
+        border-left: 1px solid rgba(blue, 0.8);
+        height: 20px;
+
+        box-shadow: rgba(blue, 0.1) (-$pixelPerStep * $itemSize / 2) 0 0 0;
+        padding-left: 3px;
+        font-size: 10px;
+        color: #fff;
+        // width: 10px;
+        width: $pixelPerStep * $itemSize / 2;
+        background: rgba(blue, 0.1);
+        overflow: visible;
+        white-space: nowrap;
+        z-index: 50;
+        transition: left 0.3s linear;
+    }
+    .name {
+        font-size: 10px;
+        text-transform: uppercase;
+        top: 4px;
+        left: 5px;
+        z-index: 30;
+        position: absolute;
+        color: #fff;
+    }
+    .item {
+        position: absolute;
+        top: 38px;
+        margin-left: -1px;
+        height: 20px;
+        &.world {
+            width: $pixelPerStep * $itemSize / 2;
+            box-shadow: rgba(0, 255, 0, 0.2) (-$pixelPerStep * $itemSize / 2) 0 0 0;
+        }
+        &.progress {
+            width: $pixelPerStep * 1;
+            height: 40px;
+        }
+
+        transition: left 0.3s linear;
+        font-size: 12px;
+        background: rgba(39, 209, 39, 0.2);
+        z-index: 20;
+        border-left: 2px solid rgb(0, 255, 0);
+        border-top-right-radius: 0px;
+        box-sizing: border-box;
+        padding-left: 5px;
+        padding-top: 2px;
+        border-bottom-right-radius: 5px;
+    }
+}
+
+.contents {
+    .lane {
+        margin: 5px 0;
+        padding: 10px;
+        background: #333;
+        font-family: monospace;
+        b {
+            color: #39f;
+        }
+    }
 }

@@ -18,7 +18,7 @@ export class BeltLane {
     public PosYw: int = 0n;
 
     public PreAcceptHook?: (item: BeltItem) => BeltItem;
-    public PostAcceptHook?: (lane: BeltLane, remainingTicks: int) => int;
+    public PostAcceptHook?: (lane: BeltLane, remainingTicks: int) => void;
     public ProgressClampHook?: (item: BeltLane, ticks: int) => int;
 
     public get Empty(): boolean {

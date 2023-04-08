@@ -3,22 +3,31 @@
   .info
     | Tick: {{ tick }}
     br
+    label
+      input(type="checkbox", v-model="autoSpawnItems")
+      | Auto Spawn Items
+    br
+    label
+      input(type="checkbox", v-model="autoAdvanceSimulation")
+      | Auto Advance Simulation [p]
+    br
     button(@click="prevTick()", :disabled="snapshots.length == 0") Prev [j]
     button(@click="nextTick()") Next [k]
+    button(@click="nextMaxTick()") Next (+{{maxTicksPerFrame}})
   h3 PROGRESS (WORLD SPACE STEPS)
   .simFrame
     .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Length_S) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosXw) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosYw) + 'px') }")
-      .name {{ lane.Name }} (+{{ lane.Definition.StepsPerTick_S  }} / tick)
+      .name {{ lane.Name }} (+{{ lane.Definition.StepsPerTick_S  }} / tick) &RightArrow; {{ lane.NextLane == null ? "-" : lane.NextLane.Name }}
       .tick(v-for="i in Number(lane.Definition.Length_S)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}_S
       .maxStep(:style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}") Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
-      .item.world(v-if="lane.Item" :style="{ left: (Number(lane.Definition.TicksToSteps_S(lane.Progress_T)) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}@{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}
+      .item.world(v-if="lane.Item", :key="lane.Item.UID" :style="{ left: (Number(lane.Definition.TicksToSteps_S(lane.Progress_T)) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}@{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}
   br
   h3 PROGRESS (TICKS)
   .simFrame
     .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Duration_T) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosX) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosY) + 'px') }")
       .name {{ lane.Name }}
       .tick(v-for="i in Number(lane.Definition.Duration_T)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}_T
-      .item.progress(v-if="lane.Item" :style="{ left: (Number(lane.Progress_T) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
+      .item.progress(v-if="lane.Item" :key="lane.Item.UID" :style="{ left: (Number(lane.Progress_T) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
 
   h3 CONTENTS
 
@@ -51,9 +60,13 @@
     import { BeltItem } from "@/simulation/BeltItem";
     import type { int } from "@/simulation/polyfill";
 
-    let PIXEL_PER_STEP = 40;
+    let PIXEL_PER_STEP = 30;
     let tick = ref(0);
-    let lanes = reactive(SCENARIO);
+    let lanes = reactive(SCENARIO.lanes.slice().reverse());
+    let buildings = reactive(SCENARIO.buildings.slice().reverse());
+    let autoSpawnItems = ref(true);
+    let autoAdvanceSimulation = ref(false);
+    let maxTicksPerFrame = ref(BeltLaneDefinition.TICKS_PER_SECOND / 2n);
 
     type Snapshot = { item?: BeltItem; progress_T: int; maxStep_S: int }[];
     function makeSnapshot() {
@@ -71,12 +84,18 @@
 
     let snapshots: Snapshot[] = [];
 
-    function nextTick() {
+    function nextTick(ticks: int = 1n) {
         snapshots.push(makeSnapshot());
-        ++tick.value;
+        tick.value += Number(ticks);
         for (var lane of lanes) {
-            BeltSimulation.UpdateLane(lane, 1n);
-            console.log(lane.Item, lane.Progress_T);
+            BeltSimulation.UpdateLane(lane, ticks);
+        }
+        if (autoSpawnItems.value) {
+            var firstLane = lanes[lanes.length - 1];
+            if (!firstLane.HasItem && firstLane.MaxStep_S >= 0) {
+                firstLane.Item = new BeltItem();
+                firstLane.Progress_T = firstLane.MaxTickClamped_T;
+            }
         }
     }
     function prevTick() {
@@ -93,12 +112,27 @@
         }
     }
 
+    function nextMaxTick() {
+        nextTick(maxTicksPerFrame.value);
+    }
+
+    function automaticTick() {
+        if (!autoAdvanceSimulation.value) {
+            return;
+        }
+        nextTick();
+    }
+
+    setInterval(automaticTick, 250);
+
     window.addEventListener("keydown", (ev) => {
         console.log(ev.key);
         if (ev.key == "k") {
             nextTick();
         } else if (ev.key == "j") {
             prevTick();
+        } else if (ev.key == "p") {
+            autoAdvanceSimulation.value = !autoAdvanceSimulation.value;
         }
     });
 </script>

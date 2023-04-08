@@ -8,16 +8,6 @@ const routes: Array<RouteRecordRaw> = [
     name: "Home",
     component: () => import("@/pages/Home.vue"),
   },
-  {
-    path: "/axios",
-    name: "Axios",
-    component: () => import("@/pages/Axios.vue"),
-  },
-  {
-    path: "/about",
-    name: "About",
-    component: () => import("@/pages/About.vue"),
-  },
 ];
 
 const router = createRouter({

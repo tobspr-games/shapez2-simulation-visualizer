@@ -17,6 +17,8 @@
     br
     button(@click="prevTick()", :disabled="snapshots.length == 0") Prev [j]
     button(@click="nextTick()") Next [k]
+    button(@click="nextTick(2n)") Next 2
+    button(@click="nextTick(3n)") Next 3
     button(@click="nextMaxTick()") Next (+{{maxTicksPerFrame}})
   h3 PROGRESS (WORLD SPACE STEPS)
   .simFrame

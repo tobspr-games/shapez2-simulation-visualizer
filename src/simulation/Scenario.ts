@@ -1,7 +1,7 @@
 import { BeltItem } from "@/simulation/BeltItem";
 import { BeltSimulation } from "@/simulation/BeltSimulation";
 import { MapEntity } from "@/simulation/MapEntity";
-import { BeltEntity } from "@/simulation/buildings/Belt";
+import { BeltEntity, SlowBeltEntity } from "@/simulation/buildings/Belt";
 import { MergerEntity } from "@/simulation/buildings/Merger";
 import { RotatorEntity } from "@/simulation/buildings/Rotator";
 import { SplitterEntity } from "@/simulation/buildings/Splitter";
@@ -19,7 +19,7 @@ let merger = new MergerEntity(30n, 1n, 41n, 1n);
 
 // var rotator = new RotatorEntity(21n, 1n, 31n, 1n);
 // let belt3 = new BeltEntity(36n, 3n, 51n, 3n);
-let lastBelt = new BeltEntity(51n, 1n, 61n, 1n);
+let lastBelt = new SlowBeltEntity(51n, 1n, 61n, 1n);
 let trash = new TrashEntity(61n, 1n, 71n, 1n);
 // let trashLower = new TrashEntity(16n, 7n, 31n, 7n);
 

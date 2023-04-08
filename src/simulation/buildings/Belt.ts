@@ -22,3 +22,19 @@ export class BeltEntity extends MapEntity {
         return [this.MainLane];
     }
 }
+
+export class SlowBeltEntity extends BeltEntity {
+    protected ticksSaved: int = 0n;
+
+    constructor(posX: int, posY: int, posXw: int, posYw: int) {
+        super(posX, posY, posXw, posYw);
+        this.MainLane.Name = "SlowBelt";
+    }
+    public OnUpdate(deltaTicks_T: int): void {
+        this.ticksSaved += deltaTicks_T;
+        while (this.ticksSaved >= 4n) {
+            this.ticksSaved -= 4n;
+            super.OnUpdate(4n);
+        }
+    }
+}

@@ -90,17 +90,17 @@ export class BeltSimulation {
         } else {
             // We are stuck to our local lane progress and won't reach the end this tick
             var maxTicks_T: int = min(lane.Definition.StepsToTicks_T(maxStep_S), laneDuration_T - 1n);
-            console.log(
-                "Max ticks for " + lane.Name + " : " + maxTicks_T + " / " + lane.Definition.Duration_T,
-                "laneDuration_T = ",
-                laneDuration_T,
-                "maxStep_S=",
-                maxStep_S,
-                "steps2ticks(maxStep_S: ",
-                maxStep_S,
-                ")=",
-                lane.Definition.StepsToTicks_T(maxStep_S),
-            );
+            // console.log(
+            //     "Max ticks for " + lane.Name + " : " + maxTicks_T + " / " + lane.Definition.Duration_T,
+            //     "laneDuration_T = ",
+            //     laneDuration_T,
+            //     "maxStep_S=",
+            //     maxStep_S,
+            //     "steps2ticks(maxStep_S: ",
+            //     maxStep_S,
+            //     ")=",
+            //     lane.Definition.StepsToTicks_T(maxStep_S),
+            // );
 
             if (lane.Progress_T > maxTicks_T) {
                 // This lane went farther than it should already

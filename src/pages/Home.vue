@@ -11,6 +11,10 @@
       input(type="checkbox", v-model="autoAdvanceSimulation")
       | Auto Advance Simulation [p]
     br
+    label
+      input(type="checkbox", v-model="showMaxStep")
+      | Show MaxStep_S
+    br
     button(@click="prevTick()", :disabled="snapshots.length == 0") Prev [j]
     button(@click="nextTick()") Next [k]
     button(@click="nextMaxTick()") Next (+{{maxTicksPerFrame}})
@@ -18,16 +22,16 @@
   .simFrame
     .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Length_S) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosXw) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosYw) + 'px') }")
       .name {{ lane.Name }} (+{{ lane.Definition.StepsPerTick_S  }} / tick) &RightArrow; {{ lane.NextLane == null ? "-" : lane.NextLane.Name }}
-      .tick(v-for="i in Number(lane.Definition.Length_S)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}_S
-      .maxStep(:key="tick" :style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}") Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
-      .item.world(v-if="lane.Item", :key="lane.Item.UID" :style="{ left: (Number(lane.Definition.TicksToSteps_S(lane.Progress_T)) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}@{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}
+      .tick(v-for="i in Number(lane.Definition.Length_S)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}
+      .maxStep(v-if="showMaxStep" :key="tick" :style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}") Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
+      .item.world(v-if="lane.Item", :class="['item-' + Number(lane.Item.UID) % 20]" :key="lane.Item.UID" :style="{ left: (Number(lane.Definition.TicksToSteps_S(lane.Progress_T)) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}@{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}
   br
   h3 PROGRESS (TICKS)
   .simFrame
     .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Duration_T) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosX) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosY) + 'px') }")
       .name {{ lane.Name }}
-      .tick(v-for="i in Number(lane.Definition.Duration_T)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}_T
-      .item.progress(v-if="lane.Item" :key="lane.Item.UID" :style="{ left: (Number(lane.Progress_T) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
+      .tick(v-for="i in Number(lane.Definition.Duration_T)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}
+      .item.progress(v-if="lane.Item", :class="['item-' + Number(lane.Item.UID) % 20]" :key="lane.Item.UID" :style="{ left: (Number(lane.Progress_T) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
 
   h3 CONTENTS
 
@@ -61,7 +65,7 @@
     import type { int } from "@/simulation/polyfill";
     import { BeltLane } from "@/simulation/BeltLane";
 
-    let PIXEL_PER_STEP = 30;
+    let PIXEL_PER_STEP = 20;
     let tick = ref(0);
 
     let allLanes: BeltLane[] = [];
@@ -75,6 +79,7 @@
     let buildings = reactive(SCENARIO.buildings.slice().reverse());
     let autoSpawnItems = ref(true);
     let autoAdvanceSimulation = ref(false);
+    let showMaxStep = ref(true);
     let maxTicksPerFrame = ref(BeltLaneDefinition.TICKS_PER_SECOND / 2n);
 
     type Snapshot = { item?: BeltItem; progress_T: int; maxStep_S: int }[];
@@ -96,8 +101,8 @@
     function nextTick(ticks: int = 1n) {
         snapshots.push(makeSnapshot());
         tick.value += Number(ticks);
-        for (var lane of lanes) {
-            BeltSimulation.UpdateLane(lane, ticks);
+        for (var building of buildings) {
+            building.OnUpdate(ticks);
         }
         if (autoSpawnItems.value) {
             var firstLane = lanes[lanes.length - 1];
@@ -135,7 +140,6 @@
     setInterval(automaticTick, 250);
 
     window.addEventListener("keydown", (ev) => {
-        console.log(ev.key);
         if (ev.key == "k") {
             nextTick();
         } else if (ev.key == "j") {

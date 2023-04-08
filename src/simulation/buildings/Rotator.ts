@@ -1,5 +1,6 @@
 import { BeltLane } from "@/simulation/BeltLane";
 import { BeltLaneDefinition } from "@/simulation/BeltLaneDefinition";
+import { BeltSimulation } from "@/simulation/BeltSimulation";
 import { MapEntity } from "@/simulation/MapEntity";
 import { int } from "@/simulation/polyfill";
 
@@ -46,5 +47,15 @@ export class RotatorEntity extends MapEntity {
             posYw,
             this.ProcessingLane,
         );
+    }
+
+    public OnUpdate(deltaTicks_T: int): void {
+        BeltSimulation.UpdateLane(this.OutputLane, deltaTicks_T);
+        BeltSimulation.UpdateLane(this.ProcessingLane, deltaTicks_T);
+        BeltSimulation.UpdateLane(this.InputLane, deltaTicks_T);
+    }
+
+    public GetLanes(): BeltLane[] {
+        return [this.InputLane, this.ProcessingLane, this.OutputLane];
     }
 }

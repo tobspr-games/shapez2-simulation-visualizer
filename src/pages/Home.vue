@@ -19,7 +19,7 @@
     .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Length_S) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosXw) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosYw) + 'px') }")
       .name {{ lane.Name }} (+{{ lane.Definition.StepsPerTick_S  }} / tick) &RightArrow; {{ lane.NextLane == null ? "-" : lane.NextLane.Name }}
       .tick(v-for="i in Number(lane.Definition.Length_S)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}_S
-      .maxStep(:style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}") Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
+      .maxStep(:key="tick" :style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}") Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
       .item.world(v-if="lane.Item", :key="lane.Item.UID" :style="{ left: (Number(lane.Definition.TicksToSteps_S(lane.Progress_T)) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}@{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}
   br
   h3 PROGRESS (TICKS)
@@ -59,10 +59,19 @@
     import { reactive, ref } from "vue";
     import { BeltItem } from "@/simulation/BeltItem";
     import type { int } from "@/simulation/polyfill";
+    import { BeltLane } from "@/simulation/BeltLane";
 
     let PIXEL_PER_STEP = 30;
     let tick = ref(0);
-    let lanes = reactive(SCENARIO.lanes.slice().reverse());
+
+    let allLanes: BeltLane[] = [];
+    for (var building of SCENARIO.buildings) {
+        for (var lane of building.GetLanes()) {
+            allLanes.push(lane);
+        }
+    }
+
+    let lanes = reactive(allLanes.slice().reverse());
     let buildings = reactive(SCENARIO.buildings.slice().reverse());
     let autoSpawnItems = ref(true);
     let autoAdvanceSimulation = ref(false);

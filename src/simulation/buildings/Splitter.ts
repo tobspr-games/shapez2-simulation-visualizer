@@ -31,10 +31,6 @@ export class SplitterEntity extends MapEntity {
     constructor(posX: int, posY: int) {
         super(posX, posY);
 
-        // this.MainLane.PostAcceptHook = (lane, remainingTicks) => {
-        //     lane.ClearLaneRaw_UNSAFE();
-        //     lane.MaxStep_S = 4n * BeltLaneDefinition.STEPS_PER_UNIT;
-        // };
         this.OutputLanes = [
             new BeltLane(
                 "splitterOut0",
@@ -87,9 +83,7 @@ export class SplitterEntity extends MapEntity {
         this.InputLane.NextLane = nextLane;
 
         if (BeltSimulation.UpdateLane(this.InputLane, deltaTicks_T)) {
-            console.log("Current: ", this.NextPreferredLane);
             this.NextPreferredLane = (this.NextPreferredLane + 1n) % toInt(this.OutputLanes.length);
-            console.log("NEXT:", this.NextPreferredLane);
         }
     }
 

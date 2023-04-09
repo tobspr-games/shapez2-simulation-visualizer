@@ -170,16 +170,16 @@ export class BeltSimulation {
                 var desiredNewProgress_T = lane.Progress_T + delta_T + lane.AggregatedExtraProgress_T;
                 var actualNewProgress_T = min(desiredNewProgress_T, maxTicks_T);
                 var missingMomentum_T = max(0n, desiredNewProgress_T - actualNewProgress_T);
-                console.log(
-                    "Item @",
-                    lane.Item?.UID,
-                    "wants to go to ",
-                    desiredNewProgress_T,
-                    "but can only go to",
-                    actualNewProgress_T,
-                    "missing",
-                    missingMomentum_T,
-                );
+                // console.log(
+                //     "Item @",
+                //     lane.Item?.UID,
+                //     "wants to go to ",
+                //     desiredNewProgress_T,
+                //     "but can only go to",
+                //     actualNewProgress_T,
+                //     "missing",
+                //     missingMomentum_T,
+                // );
 
                 lane.AggregatedExtraProgress_T = min(
                     missingMomentum_T,

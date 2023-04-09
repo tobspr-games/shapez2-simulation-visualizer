@@ -32,11 +32,6 @@ export class MergerEntity extends MapEntity {
     constructor(posX: int, posY: int) {
         super(posX, posY);
 
-        // this.MainLane.PostAcceptHook = (lane, remainingTicks) => {
-        //     lane.ClearLaneRaw_UNSAFE();
-        //     lane.MaxStep_S = 4n * BeltLaneDefinition.STEPS_PER_UNIT;
-        // };
-
         this.OutputLane = new BeltLane(
             "mergerOut",
             MergerEntity.OutputLaneDefinition,
@@ -68,15 +63,6 @@ export class MergerEntity extends MapEntity {
         }
         this.OutputLane.PostAcceptHook = (lane, excessProgress) => {
             this.NextPreferredInput = (this.NextPreferredInput + 1n) % toInt(this.InputLanes.length);
-            console.log(
-                "post accept",
-                lane.Item?.UID,
-                "extra=" + lane.AggregatedExtraProgress_T,
-                "on lane ",
-                lane.Name,
-                "with ticks",
-                excessProgress,
-            );
             lane.AggregatedExtraProgress_T = 0n;
             var previousLane = this.CurrentInputIndex;
             this.CurrentInputIndex = -1n;

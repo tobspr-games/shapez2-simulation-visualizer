@@ -1,7 +1,7 @@
 import { BeltItem } from "@/simulation/BeltItem";
 import { BeltSimulation } from "@/simulation/BeltSimulation";
 import { MapEntity } from "@/simulation/MapEntity";
-import { BeltEntity, ShortBeltEntity, SlowBeltEntity } from "@/simulation/buildings/Belt";
+import { BeltEntity, ShortBeltEntity, SlowBelt1Entity, SlowBeltEntity } from "@/simulation/buildings/Belt";
 import { MergerEntity } from "@/simulation/buildings/Merger";
 import { RotatorEntity } from "@/simulation/buildings/Rotator";
 import { SplitterEntity } from "@/simulation/buildings/Splitter";
@@ -15,14 +15,13 @@ let splitter = new SplitterEntity(belt1.RightEndX, 0n);
 
 let beltUp = new BeltEntity(splitter.RightEndX, 0n);
 let beltUp1 = new BeltEntity(beltUp.RightEndX, 0n);
-// let beltDown = new BeltEntity(splitter.RightEndX, 7n);
 
 let rotator = new RotatorEntity(splitter.RightEndX, 7n);
 
 let merger = new MergerEntity(max(beltUp.RightEndX, rotator.RightEndX), 0n);
 
-let slowBelt = new BeltEntity(merger.RightEndX, 0n);
-let lastBeltAfter = new BeltEntity(slowBelt.RightEndX, 0n);
+let slowBelt = new SlowBeltEntity(merger.RightEndX, 0n);
+let lastBeltAfter = new SlowBelt1Entity(slowBelt.RightEndX, 0n);
 let lastBeltAfter1 = new BeltEntity(lastBeltAfter.RightEndX, 0n);
 let lastBeltAfter2 = new BeltEntity(lastBeltAfter1.RightEndX, 0n);
 let trash = new TrashEntity(lastBeltAfter2.RightEndX, 0n);
@@ -43,12 +42,6 @@ slowBelt.MainLane.NextLane = lastBeltAfter.MainLane;
 lastBeltAfter.MainLane.NextLane = lastBeltAfter1.MainLane;
 lastBeltAfter1.MainLane.NextLane = lastBeltAfter2.MainLane;
 lastBeltAfter2.MainLane.NextLane = trash.MainLane;
-
-// splitter.OutputLanes[0].NextLane = rotator.InputLane;
-// splitter.OutputLanes[1].NextLane = trashLower.MainLane;
-
-// rotator.OutputLane.NextLane = belt3.MainLane;
-// belt3.MainLane.NextLane = trash.MainLane;
 
 type Scenario = {
     buildings: MapEntity[];

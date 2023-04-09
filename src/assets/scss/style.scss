@@ -6,11 +6,20 @@ $itemSize: 10;
 body {
     background: #111;
     color: #fff;
+    font-size: 14px;
+    font-family: "Roboto", "Arial", sans-serif;
 }
 
 .main {
     padding: 20px;
-    font-family: "Roboto", "Arial", sans-serif;
+}
+.info {
+    line-height: 1.5em;
+}
+
+a {
+    color: #39f;
+    text-decoration: underline;
 }
 
 button {
@@ -27,7 +36,7 @@ button {
 }
 
 .simFrame {
-    width: 2000px;
+    width: 2500px;
     height: 500px;
     background: #333;
     border: 50px solid #333;
@@ -39,6 +48,9 @@ button {
 
 h3 {
     margin: 10px 0;
+    font-size: 19px;
+    text-transform: uppercase;
+    color: #39f;
 }
 
 .building {

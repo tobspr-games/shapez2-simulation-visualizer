@@ -1,7 +1,11 @@
 <template lang="pug">
 .main
   .info
-    | Tick: {{ tick }}
+    | This is a partial port of the Belt Simulation in <a href="https://store.steampowered.com/app/2162800/shapez_2/" target="_blank">Shapez 2</a> in TypeScript, and can be used to both understand and debug the simulation. Feel free to dig into the <a href="https://github.com/tobspr-games/shapez2-simulation-visualizer/tree/main/src" target="_blank">Source Code</a> and report bugs / suggestions / feedback in the <a href="https://discord.com/invite/bvq5uGxW8G" target="_blank">Discord</a>!
+
+    br
+    br
+    | Current Tick: {{ tick }}
     br
     label
       input(type="checkbox", v-model="autoSpawnItems")
@@ -15,10 +19,11 @@
       input(type="checkbox", v-model="showMaxStep")
       | Show MaxStep_S
     br
-    button(@click="prevTick()", :disabled="snapshots.length == 0") Prev [j]
-    button(@click="nextTick()") Next [k]
-    button(@click="nextTick(2n)") Next 2
-    button(@click="nextTick(3n)") Next 3
+    br
+    button(@click="prevTick()", :disabled="snapshots.length == 0") Prev Tick [j]
+    button(@click="nextTick()") Next Tick (+1) [k]
+    button(@click="nextTick(2n)") Next (+2)
+    button(@click="nextTick(3n)") Next (+3)
     button(@click="nextMaxTick()") Next (+{{maxTicksPerFrame}})
   h3 PROGRESS (WORLD SPACE STEPS)
   .simFrame
@@ -104,17 +109,14 @@
 </template>
 
 <script setup lang="ts">
-    import { BeltSimulation } from "@/simulation/BeltSimulation";
     import { BeltLaneDefinition } from "@/simulation/BeltLaneDefinition";
     import { SCENARIO } from "@/simulation/Scenario";
     import { reactive, ref } from "vue";
     import { BeltItem } from "@/simulation/BeltItem";
     import { MapEntity } from "@/simulation/MapEntity";
-    import { toInt } from "@/simulation/polyfill";
     import type { int } from "@/simulation/polyfill";
     import { BeltLane } from "@/simulation/BeltLane";
     import type { SerializedBeltLane } from "@/simulation/BeltLane";
-    import internal from "stream";
 
     let PIXEL_PER_STEP = 20;
     let tick = ref(0);
@@ -129,7 +131,7 @@
     let lanes = reactive(allLanes.slice().reverse());
     let buildings = reactive(SCENARIO.buildings.slice().reverse());
     let autoSpawnItems = ref(true);
-    let autoAdvanceSimulation = ref(false);
+    let autoAdvanceSimulation = ref(true);
     let showMaxStep = ref(false);
     let maxTicksPerFrame = ref(BeltLaneDefinition.TICKS_PER_SECOND / 2n);
 
@@ -147,6 +149,7 @@
                 buildings,
                 tick: tick.value,
             },
+            // https://stackoverflow.com/questions/65152373/typescript-serialize-bigint-in-json
             (_, v) => (typeof v === "bigint" ? v.toString() : v),
         );
         return data;

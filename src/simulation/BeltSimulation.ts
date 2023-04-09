@@ -58,7 +58,11 @@ export class BeltSimulation {
             // We can potentially go to the end of the lane and beyond
             lane.Progress_T += delta_T;
 
-            if (lane.Progress_T >= laneDuration_T) {
+            // @EXTRA
+            var effectiveProgress_T = lane.Progress_T + lane.AggregatedExtraProgress_T;
+
+            // @EXTRA
+            if (effectiveProgress_T >= laneDuration_T) {
                 // Transfer to the next lane
                 if (nextLane.HasItem) {
                     throw new Error(
@@ -71,19 +75,47 @@ export class BeltSimulation {
                     );
                 }
 
-                if (this.TransferToLane(lane.Item!, nextLane, lane.Progress_T - laneDuration_T)) {
+                // @EXTRA
+                if (this.TransferToLane(lane.Item!, nextLane, effectiveProgress_T - laneDuration_T)) {
                     // Lane was transferred
                     // Now recompute our max progress again, since it may have changed
                     lane.ClearLane();
                     return true;
                 } else {
                     // Lane still has item, clamp progress
+
+                    // @EXTRA
+                    throw new Error("Shouldn't happen?");
+
+                    var newProgress_T = laneDuration_T - 1n;
+                    var unusedProgress_T = lane.Progress_T - newProgress_T;
+                    if (unusedProgress_T < 0n) {
+                        console.error(
+                            "unused progress < 0: ",
+                            unusedProgress_T,
+                            lane.Progress_T,
+                            newProgress_T,
+                        );
+                    }
+                    console.error("TODO");
+
+                    lane.AggregatedExtraProgress_T += unusedProgress_T;
                     lane.Progress_T = laneDuration_T - 1n;
                     this.UpdateLaneMaxProgressWithItem(lane);
                     return false;
                 }
             } else {
                 // Also update our max progress
+
+                // @EXTRA
+                // Since we were able to travel the full lane without any clamping, clear our extra progress
+                // lane.AggregatedExtraProgress_T = 0n;
+                if (lane.AggregatedExtraProgress_T > 0n) {
+                    console.log("Apply extra progress of ", lane.AggregatedExtraProgress_T, "to", lane.Name);
+                    lane.Progress_T += lane.AggregatedExtraProgress_T;
+                    lane.AggregatedExtraProgress_T = 0n;
+                }
+
                 this.UpdateLaneMaxProgressWithItem(lane);
                 return false;
             }
@@ -133,7 +165,29 @@ export class BeltSimulation {
                 }
             } else {
                 // Regular progression
-                lane.Progress_T = min(lane.Progress_T + delta_T, maxTicks_T);
+
+                // @EXTRA
+                var desiredNewProgress_T = lane.Progress_T + delta_T + lane.AggregatedExtraProgress_T;
+                var actualNewProgress_T = min(desiredNewProgress_T, maxTicks_T);
+                var missingMomentum_T = max(0n, desiredNewProgress_T - actualNewProgress_T);
+                console.log(
+                    "Item @",
+                    lane.Item?.UID,
+                    "wants to go to ",
+                    desiredNewProgress_T,
+                    "but can only go to",
+                    actualNewProgress_T,
+                    "missing",
+                    missingMomentum_T,
+                );
+
+                lane.AggregatedExtraProgress_T = min(
+                    missingMomentum_T,
+                    BeltLaneDefinition.TICKS_PER_SECOND / 2n,
+                );
+
+                // Regular progression
+                lane.Progress_T = actualNewProgress_T;
             }
 
             // Also update our max progress since we now have an item
@@ -191,6 +245,9 @@ export class BeltSimulation {
         if (nextLane.HasItem) {
             // Transfer was successful, update remaining lane
             this.UpdateLane(nextLane, remainingTicks);
+
+            // @EXTRA
+            nextLane.Extra_OnAccept();
         } else {
             // Was consumed, don't update
             // Debug.LogWarning("HOOK: Post accept hook consumed item on lane " + nextLane);

@@ -47,7 +47,7 @@ export class MergerEntity extends MapEntity {
 
         this.InputLanes = [
             new BeltLane("mergerIn0", MergerEntity.InputLaneDefinitions[0], 0n, 0n, this.OutputLane),
-            new BeltLane("mergerIn1", MergerEntity.InputLaneDefinitions[1], 0n, 6n, this.OutputLane),
+            new BeltLane("mergerIn1", MergerEntity.InputLaneDefinitions[1], 0n, 7n, this.OutputLane),
         ];
 
         for (let i: int = 0n; i < this.InputLanes.length; ++i) {

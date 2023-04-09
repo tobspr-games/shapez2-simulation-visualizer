@@ -48,3 +48,12 @@ export class SlowBeltEntity extends BeltEntity {
         }
     }
 }
+
+export class ShortBeltEntity extends BeltEntity {
+    protected static BeltDefinition: BeltLaneDefinition = new BeltLaneDefinition("BeltShort", 0.3, 0.3);
+
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
+        this.MainLane.Definition = ShortBeltEntity.BeltDefinition;
+    }
+}

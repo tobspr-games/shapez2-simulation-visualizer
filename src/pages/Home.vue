@@ -56,7 +56,6 @@
         )
             | Item{{ item.UID }}/{{ lane.Progress_T }}T/{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}S
             template(v-if="lane.AggregatedExtraProgress_T >= 0") +{{ lane.AggregatedExtraProgress_T }}
-
   br
   h3 PROGRESS (TICKS)
   .simFrame
@@ -77,7 +76,7 @@
             :class="['item-' + Number(id) % 20]"
             :style="style"
         )
-            | {{ lane.Item.UID }}
+            | {{ item.UID }}
             .accumulatedProgress(
                 v-if="lane.Item && lane.AggregatedExtraProgress_T > 0n"
                 :style="{ width: unit2px(lane.AggregatedExtraProgress_T) }"
@@ -100,7 +99,7 @@
       p <b>AggregatedExtraProgress_T</b> {{ lane.AggregatedExtraProgress_T }}
       p <b>Def</b> {{ lane.Definition.Name }}
       p <b>Def.Duration</b> {{ lane.Definition.Duration }}
-      p <b>Def.Duration_T</b> {{ lane.Definition.Duration_W }}
+      p <b>Def.Duration_T</b> {{ lane.Definition.Duration_T }}
       p <b>Def.Length_W</b> {{ lane.Definition.Length_W }}
       p <b>Def.Length_S</b> {{ lane.Definition.Length_S }}
       p <b>Def.StepsPerTick_S</b> {{ lane.Definition.StepsPerTick_S }}
@@ -180,6 +179,7 @@
     function nextTick(ticks: int = 1n) {
         snapshots.push(makeSnapshot());
         tick.value += Number(ticks);
+        // @ts-ignore
         window.tick = tick.value;
         console.clear();
         console.log("TICK (", ticks, ")");
@@ -201,6 +201,7 @@
         console.clear();
         console.log("(previous tick loaded)");
         tick.value -= 1;
+        // @ts-ignore
         window.tick = tick.value;
 
         var snapshot = snapshots.pop()!;
@@ -231,7 +232,7 @@
                 result.push({
                     id: lane.Item!.UID,
                     lane,
-                    item: lane.Item,
+                    item: lane.Item!,
                     style: {
                         left: unit2px(
                             lane.Definition.TicksToSteps_S(lane.Progress_T) + building.PosX + lane.PosX,
@@ -254,7 +255,7 @@
                 result.push({
                     id: lane.Item!.UID,
                     lane,
-                    item: lane.Item,
+                    item: lane.Item!,
                     style: {
                         left: unit2px(lane.Progress_T + building.PosX + lane.PosX),
                         top: unit2px(building.PosY + lane.PosY),
@@ -269,7 +270,7 @@
         nextTick(maxTicksPerFrame.value);
     }
 
-    function unit2px(unit: int) {
+    function unit2px(unit: int | number) {
         return PIXEL_PER_STEP * Number(unit) + "px";
     }
 

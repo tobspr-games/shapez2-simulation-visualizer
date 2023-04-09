@@ -4,12 +4,16 @@ import { join } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  base: "./",
-  resolve: {
-    alias: {
-      "@": join(__dirname, "src"),
+    plugins: [vue()],
+    base: "./",
+    resolve: {
+        alias: {
+            "@": join(__dirname, "src"),
+        },
     },
-  },
-  define: { "process.env": {} },
+
+    build: {
+        target: ["es2020"],
+    },
+    define: { "process.env": {} },
 });

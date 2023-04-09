@@ -68,7 +68,16 @@ export class MergerEntity extends MapEntity {
         }
         this.OutputLane.PostAcceptHook = (lane, excessProgress) => {
             this.NextPreferredInput = (this.NextPreferredInput + 1n) % toInt(this.InputLanes.length);
-
+            console.log(
+                "post accept",
+                lane.Item?.UID,
+                "extra=" + lane.AggregatedExtraProgress_T,
+                "on lane ",
+                lane.Name,
+                "with ticks",
+                excessProgress,
+            );
+            lane.AggregatedExtraProgress_T = 0n;
             var previousLane = this.CurrentInputIndex;
             this.CurrentInputIndex = -1n;
 

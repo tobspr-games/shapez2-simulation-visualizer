@@ -30,7 +30,7 @@ button {
     width: 2000px;
     height: 500px;
     background: #333;
-    border: 1px solid #555;
+    border: 50px solid #333;
     margin: 10px 0;
     display: block;
     position: relative;
@@ -117,46 +117,55 @@ h3 {
         position: absolute;
         color: #fff;
     }
-    .item {
+}
+
+.item {
+    position: absolute;
+    margin-top: 38px;
+    margin-left: -3px;
+    height: 20px;
+
+    &.world {
+        width: $pixelPerStep * $itemSize / 2;
+        box-shadow: rgba(0, 255, 0, 0.3) (-$pixelPerStep * $itemSize / 2 + 5px) 0 0 0;
+        text-indent: -100px;
+    }
+
+    &.progress {
+        width: $pixelPerStep * 1;
+        height: 40px;
+    }
+
+    .accumulatedProgress {
+        background: rgba(blue, 0.2);
+        height: 12px;
         position: absolute;
-        top: 38px;
-        margin-left: -3px;
-        height: 20px;
+        top: 0;
+        left: $pixelPerStep;
+    }
 
-        &.world {
-            width: $pixelPerStep * $itemSize / 2;
-            box-shadow: rgba(0, 255, 0, 0.3) (-$pixelPerStep * $itemSize / 2 + 5px) 0 0 0;
-            text-indent: -100px;
-        }
+    transition: left 0.25s linear, top 0.25s linear;
+    font-size: 11px;
+    background: rgba(39, 209, 39, 0.5) url("@/assets/shape.png") right center / 20px 20px no-repeat;
+    z-index: 200;
+    border-left: 6px solid #fff;
+    border-top-right-radius: 0px;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-top: 5px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 
-        &.progress {
-            width: $pixelPerStep * 1;
-            height: 40px;
-        }
+    $colors: red, green, blue, yellow, orange, red, green, blue, yellow, orange, red, green, blue, yellow,
+        orange, red, green, blue, yellow, orange;
 
-        transition: left 0.1s linear;
-        font-size: 11px;
-        background: rgba(39, 209, 39, 0.5) url("@/assets/shape.png") right center / 20px 20px no-repeat;
-        z-index: 200;
-        border-left: 6px solid #fff;
-        border-top-right-radius: 0px;
-        box-sizing: border-box;
-        padding-left: 5px;
-        padding-top: 5px;
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
-
-        $colors: red, green, blue, yellow, orange, red, green, blue, yellow, orange, red, green, blue, yellow,
-            orange, red, green, blue, yellow, orange;
-
-        @for $i from 0 through 19 {
-            &.item-#{$i} {
-                $color: nth($colors, $i + 1);
-                // border-left-color: $color;
-                background-color: rgba($color, 0.5);
-                &.world {
-                    box-shadow: rgba($color, 0.3) (-$pixelPerStep * $itemSize / 2 + 5px) 0 0 0;
-                }
+    @for $i from 0 through 19 {
+        &.item-#{$i} {
+            $color: nth($colors, $i + 1);
+            // border-left-color: $color;
+            background-color: rgba($color, 0.5);
+            &.world {
+                box-shadow: rgba($color, 0.3) (-$pixelPerStep * $itemSize / 2 + 5px) 0 0 0;
             }
         }
     }

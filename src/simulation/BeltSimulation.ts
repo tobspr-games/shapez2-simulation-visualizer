@@ -107,11 +107,14 @@ export class BeltSimulation {
             } else {
                 // Also update our max progress
 
+                console.warn("RESET PROGRESS ON", lane.Name, lane.Item!.UID);
+                lane.AggregatedExtraProgress_T = 0n;
+
                 // @EXTRA
                 // Since we were able to travel the full lane without any clamping, clear our extra progress
                 // lane.AggregatedExtraProgress_T = 0n;
                 if (lane.AggregatedExtraProgress_T > 0n) {
-                    console.log("Apply extra progress of ", lane.AggregatedExtraProgress_T, "to", lane.Name);
+                    console.warn("Apply extra progress of ", lane.AggregatedExtraProgress_T, "to", lane.Name);
                     lane.Progress_T += lane.AggregatedExtraProgress_T;
                     lane.AggregatedExtraProgress_T = 0n;
                 }
@@ -170,21 +173,27 @@ export class BeltSimulation {
                 var desiredNewProgress_T = lane.Progress_T + delta_T + lane.AggregatedExtraProgress_T;
                 var actualNewProgress_T = min(desiredNewProgress_T, maxTicks_T);
                 var missingMomentum_T = max(0n, desiredNewProgress_T - actualNewProgress_T);
-                // console.log(
-                //     "Item @",
-                //     lane.Item?.UID,
-                //     "wants to go to ",
-                //     desiredNewProgress_T,
-                //     "but can only go to",
-                //     actualNewProgress_T,
-                //     "missing",
-                //     missingMomentum_T,
-                // );
 
-                lane.AggregatedExtraProgress_T = min(
-                    missingMomentum_T,
-                    BeltLaneDefinition.TICKS_PER_SECOND / 2n,
-                );
+                if (missingMomentum_T == 0n) {
+                    console.log("CLEAR", lane.Name, lane.Item?.UID);
+                    lane.AggregatedExtraProgress_T = 0n;
+                } else {
+                    console.log(
+                        "Item @",
+                        lane.Name,
+                        lane.Item?.UID,
+                        "wants to go to ",
+                        desiredNewProgress_T,
+                        "but can only go to",
+                        actualNewProgress_T,
+                        "missing",
+                        missingMomentum_T,
+                    );
+                    lane.AggregatedExtraProgress_T = min(
+                        missingMomentum_T,
+                        BeltLaneDefinition.TICKS_PER_SECOND / 2n,
+                    );
+                }
 
                 // Regular progression
                 lane.Progress_T = actualNewProgress_T;
@@ -211,9 +220,9 @@ export class BeltSimulation {
             throw new Error("Item to transfer to " + nextLane + " but lane is empty!");
         }
 
-        var nextDefinition = nextLane.Definition;
-
+        // @EXTRA
         // Lane filters
+        // var nextDefinition = nextLane.Definition;
         // if (!nextDefinition.CheckFilters(itemToTransfer))
         // {
         //     return false;

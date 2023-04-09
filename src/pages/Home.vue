@@ -40,17 +40,17 @@
             .maxStep(
                 v-if="showMaxStep"
                 :key="tick"
-                :style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}"
+                :style="{ left: unit2px(lane.MaxStep_S)}"
             )
                 | Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
-            .item.world(
-                v-if="lane.Item",
-                :class="['item-' + Number(lane.Item.UID) % 20]"
-                :key="lane.Item.UID"
-                :style="{ left: unit2px(lane.Definition.TicksToSteps_S(lane.Progress_T)) }"
-            )
-                | Item{{ lane.Item.UID }}/{{ lane.Progress_T }}T/{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}S
-                template(v-if="lane.AggregatedExtraProgress_T >= 0") +{{ lane.AggregatedExtraProgress_T }}
+
+    template(v-for="{item, lane, id, style} in getAllWorldItems()" :key="id")
+        .item.world(
+            :class="['item-' + Number(id) % 20]"
+            :style="style"
+        )
+            | Item{{ item.UID }}/{{ lane.Progress_T }}T/{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}S
+            template(v-if="lane.AggregatedExtraProgress_T >= 0") +{{ lane.AggregatedExtraProgress_T }}
 
   br
   h3 PROGRESS (TICKS)
@@ -66,11 +66,19 @@
                 :style="{ left: unit2px(i-1) }"
             )
                 | {{ i-1 }}
-            .item.progress(
-                v-if="lane.Item",
-                :class="['item-' + Number(lane.Item.UID) % 20]" :key="lane.Item.UID"
-                :style="{ left: unit2px(lane.Progress_T) }")
-                | \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
+
+    template(v-for="{item, lane, id, style} in getAllTickItems()" :key="id")
+        .item.progress(
+            :class="['item-' + Number(id) % 20]"
+            :style="style"
+        )
+            | {{ lane.Item.UID }}
+            .accumulatedProgress(
+                v-if="lane.Item && lane.AggregatedExtraProgress_T > 0n"
+                :style="{ width: unit2px(lane.AggregatedExtraProgress_T) }"
+            ) +{{ lane.AggregatedExtraProgress_T }}
+
+
   h3 CONTENTS
 
   .contents
@@ -84,6 +92,7 @@
       p <b>Item</b> {{ lane.Item?.UID }}
       p(v-if="lane.Item") <b>Progress_T</b> {{ lane.Progress_T }}
       p <b>MaxStep_S</b> {{ lane.MaxStep_S }}
+      p <b>AggregatedExtraProgress_T</b> {{ lane.AggregatedExtraProgress_T }}
       p <b>Def</b> {{ lane.Definition.Name }}
       p <b>Def.Duration</b> {{ lane.Definition.Duration }}
       p <b>Def.Duration_T</b> {{ lane.Definition.Duration_W }}
@@ -169,7 +178,8 @@
         snapshots.push(makeSnapshot());
         tick.value += Number(ticks);
         window.tick = tick.value;
-
+        console.clear();
+        console.log("TICK (", ticks, ")");
         for (var building of buildings) {
             building.OnUpdate(ticks);
         }
@@ -185,6 +195,8 @@
         if (snapshots.length == 0) {
             return;
         }
+        console.clear();
+        console.log("(previous tick loaded)");
         tick.value -= 1;
         window.tick = tick.value;
 
@@ -206,6 +218,50 @@
         }
     }
 
+    function getAllWorldItems() {
+        let result = [];
+        for (var building of buildings) {
+            for (var lane of building.GetLanes()) {
+                if (!lane.HasItem) {
+                    continue;
+                }
+                result.push({
+                    id: lane.Item!.UID,
+                    lane,
+                    item: lane.Item,
+                    style: {
+                        left: unit2px(
+                            lane.Definition.TicksToSteps_S(lane.Progress_T) + building.PosX + lane.PosX,
+                        ),
+                        top: unit2px(building.PosY + lane.PosY),
+                    },
+                });
+            }
+        }
+        return result.sort((a, b) => Number(a.id - b.id));
+    }
+
+    function getAllTickItems() {
+        let result = [];
+        for (var building of buildings) {
+            for (var lane of building.GetLanes()) {
+                if (!lane.HasItem) {
+                    continue;
+                }
+                result.push({
+                    id: lane.Item!.UID,
+                    lane,
+                    item: lane.Item,
+                    style: {
+                        left: unit2px(lane.Progress_T + building.PosX + lane.PosX),
+                        top: unit2px(building.PosY + lane.PosY),
+                    },
+                });
+            }
+        }
+        return result.sort((a, b) => Number(a.id - b.id));
+    }
+
     function nextMaxTick() {
         nextTick(maxTicksPerFrame.value);
     }
@@ -218,8 +274,8 @@
         return {
             width: unit2px(building.EffectiveDimensions.x),
             height: unit2px(building.EffectiveDimensions.y),
-            left: unit2px(building.PosX + 2n),
-            top: unit2px(building.PosY + 2n),
+            left: unit2px(building.PosX),
+            top: unit2px(building.PosY),
         };
     }
 

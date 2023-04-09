@@ -9,9 +9,9 @@ export class BeltEntity extends MapEntity {
 
     protected static BeltDefinition: BeltLaneDefinition = new BeltLaneDefinition("Belt", 0.5, 0.5);
 
-    constructor(posX: int, posY: int, posXw: int, posYw: int) {
-        super();
-        this.MainLane = new BeltLane("belt", BeltEntity.BeltDefinition, posX, posY, posXw, posYw, undefined);
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
+        this.MainLane = new BeltLane("belt", BeltEntity.BeltDefinition, 0n, 0n, undefined);
     }
 
     public OnUpdate(deltaTicks_T: int): void {
@@ -24,16 +24,26 @@ export class BeltEntity extends MapEntity {
 }
 
 export class SlowBeltEntity extends BeltEntity {
-    protected ticksSaved: int = 0n;
+    protected TicksSaved: int = 0n;
 
-    constructor(posX: int, posY: int, posXw: int, posYw: int) {
-        super(posX, posY, posXw, posYw);
+    public Serialize() {
+        return {
+            TicksSaved: this.TicksSaved,
+        };
+    }
+
+    public Deserialize(data: any): void {
+        this.TicksSaved = data.TicksSaved;
+    }
+
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
         this.MainLane.Name = "SlowBelt";
     }
     public OnUpdate(deltaTicks_T: int): void {
-        this.ticksSaved += deltaTicks_T;
-        while (this.ticksSaved >= 4n) {
-            this.ticksSaved -= 4n;
+        this.TicksSaved += deltaTicks_T;
+        while (this.TicksSaved >= 4n) {
+            this.TicksSaved -= 4n;
             super.OnUpdate(4n);
         }
     }

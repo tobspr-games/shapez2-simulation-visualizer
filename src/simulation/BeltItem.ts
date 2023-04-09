@@ -5,8 +5,12 @@ export class BeltItem {
 
     public UID: int;
 
-    constructor() {
-        BeltItem.NextUID += 1n;
-        this.UID = BigInt(BeltItem.NextUID);
+    constructor(uid: int = -1n) {
+        if (uid == -1n) {
+            BeltItem.NextUID += 1n;
+            this.UID = BigInt(BeltItem.NextUID);
+        } else {
+            this.UID = uid;
+        }
     }
 }

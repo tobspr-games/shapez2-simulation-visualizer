@@ -9,19 +9,16 @@ import { TrashEntity } from "@/simulation/buildings/Trash";
 
 let item = new BeltItem();
 
-let belt1 = new BeltEntity(1n, 1n, 1n, 1n);
-let splitter = new SplitterEntity(6n, 3n, 11n, 3n);
+let belt1 = new BeltEntity(1n, 0n);
+let splitter = new SplitterEntity(belt1.RightEndX, 0n);
 
-let beltUp = new BeltEntity(20n, 1n, 31n, 1n);
-let beltDown = new BeltEntity(20n, 7n, 31n, 7n);
+let beltUp = new BeltEntity(splitter.RightEndX, 0n);
+let beltDown = new BeltEntity(splitter.RightEndX, 7n);
 
-let merger = new MergerEntity(30n, 1n, 41n, 1n);
+let merger = new MergerEntity(beltUp.RightEndX, 0n);
 
-// var rotator = new RotatorEntity(21n, 1n, 31n, 1n);
-// let belt3 = new BeltEntity(36n, 3n, 51n, 3n);
-let lastBelt = new SlowBeltEntity(51n, 1n, 61n, 1n);
-let trash = new TrashEntity(61n, 1n, 71n, 1n);
-// let trashLower = new TrashEntity(16n, 7n, 31n, 7n);
+let lastBelt = new SlowBeltEntity(merger.RightEndX, 0n);
+let trash = new TrashEntity(lastBelt.RightEndX, 0n);
 
 belt1.MainLane.Item = item;
 belt1.MainLane.Progress_T = 1n;

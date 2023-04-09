@@ -22,19 +22,55 @@
     button(@click="nextMaxTick()") Next (+{{maxTicksPerFrame}})
   h3 PROGRESS (WORLD SPACE STEPS)
   .simFrame
-    .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Length_S) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosXw) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosYw) + 'px') }")
-      .name {{ lane.Name }} (+{{ lane.Definition.StepsPerTick_S  }} / tick) &RightArrow; {{ lane.NextLane == null ? "-" : lane.NextLane.Name }}
-      .tick(v-for="i in Number(lane.Definition.Length_S)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}
-      .maxStep(v-if="showMaxStep" :key="tick" :style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}") Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
-      .item.world(v-if="lane.Item", :class="['item-' + Number(lane.Item.UID) % 20]" :key="lane.Item.UID" :style="{ left: (Number(lane.Definition.TicksToSteps_S(lane.Progress_T)) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}@{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}
+    .building(v-for="building in buildings" :style="buildingStyle(building)")
+        .name {{ building.constructor.name }}
+        .beltLane(
+            v-for="lane in building.GetLanes()"
+            :style="{ width: unit2px(lane.Definition.Length_S), left: unit2px(lane.PosX),  top: unit2px(lane.PosY) }"
+        )
+            .name
+                | {{ lane.Name }}
+                | (+{{ lane.Definition.StepsPerTick_S  }} / tick)
+                | &RightArrow; {{ lane.NextLane == null ? "-" : lane.NextLane.Name }}
+            .tick(
+                v-for="i in Number(lane.Definition.Length_S)",
+                :style="{ left: unit2px(i-1) }"
+            )
+                | {{ i-1 }}
+            .maxStep(
+                v-if="showMaxStep"
+                :key="tick"
+                :style="{ left: ((Number(lane.MaxStep_S)) * PIXEL_PER_STEP) + 'px'}"
+            )
+                | Max@{{ lane.Name }}@{{ lane.MaxStep_S }}
+            .item.world(
+                v-if="lane.Item",
+                :class="['item-' + Number(lane.Item.UID) % 20]"
+                :key="lane.Item.UID"
+                :style="{ left: unit2px(lane.Definition.TicksToSteps_S(lane.Progress_T)) }"
+            )
+                | Item{{ lane.Item.UID }}/{{ lane.Progress_T }}T/{{ lane.Definition.TicksToSteps_S(lane.Progress_T) }}S
+                template(v-if="lane.AggregatedExtraProgress_T >= 0") +{{ lane.AggregatedExtraProgress_T }}
+
   br
   h3 PROGRESS (TICKS)
   .simFrame
-    .beltLane(v-for="lane in lanes" :style="{ width: (PIXEL_PER_STEP * Number(lane.Definition.Duration_T) - 2) + 'px', left: (10 + PIXEL_PER_STEP * Number(lane.PosX) + 'px'),  top: (10 + PIXEL_PER_STEP * Number(lane.PosY) + 'px') }")
-      .name {{ lane.Name }}
-      .tick(v-for="i in Number(lane.Definition.Duration_T)", :style="{ left: ((i-1) * PIXEL_PER_STEP) + 'px'}") {{ i-1 }}
-      .item.progress(v-if="lane.Item", :class="['item-' + Number(lane.Item.UID) % 20]" :key="lane.Item.UID" :style="{ left: (Number(lane.Progress_T) * PIXEL_PER_STEP) + 'px'}") \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
-
+    .building(v-for="building in buildings" :style="buildingStyle(building)")
+        .beltLane(
+            v-for="lane in building.GetLanes()"
+            :style="{ width: unit2px(lane.Definition.Duration_T), left: unit2px(lane.PosX), top: unit2px(lane.PosY) }"
+        )
+            .name {{ lane.Name }}
+            .tick(
+                v-for="i in Number(lane.Definition.Duration_T)",
+                :style="{ left: unit2px(i-1) }"
+            )
+                | {{ i-1 }}
+            .item.progress(
+                v-if="lane.Item",
+                :class="['item-' + Number(lane.Item.UID) % 20]" :key="lane.Item.UID"
+                :style="{ left: unit2px(lane.Progress_T) }")
+                | \#{{ lane.Item.UID }}@{{ lane.Progress_T }}
   h3 CONTENTS
 
   .contents
@@ -64,8 +100,12 @@
     import { SCENARIO } from "@/simulation/Scenario";
     import { reactive, ref } from "vue";
     import { BeltItem } from "@/simulation/BeltItem";
+    import { MapEntity } from "@/simulation/MapEntity";
+    import { toInt } from "@/simulation/polyfill";
     import type { int } from "@/simulation/polyfill";
     import { BeltLane } from "@/simulation/BeltLane";
+    import type { SerializedBeltLane } from "@/simulation/BeltLane";
+    import internal from "stream";
 
     let PIXEL_PER_STEP = 20;
     let tick = ref(0);
@@ -81,18 +121,43 @@
     let buildings = reactive(SCENARIO.buildings.slice().reverse());
     let autoSpawnItems = ref(true);
     let autoAdvanceSimulation = ref(false);
-    let showMaxStep = ref(true);
+    let showMaxStep = ref(false);
     let maxTicksPerFrame = ref(BeltLaneDefinition.TICKS_PER_SECOND / 2n);
 
-    type Snapshot = { item?: BeltItem; progress_T: int; maxStep_S: int }[];
-    function makeSnapshot() {
-        var result: Snapshot = [];
+    type Snapshot = {
+        hash: string;
+        buildings: {
+            data: any;
+            lanes: SerializedBeltLane[];
+        }[];
+    };
 
-        for (var lane of lanes) {
-            result.push({
-                item: lane.Item,
-                progress_T: lane.Progress_T,
-                maxStep_S: lane.MaxStep_S,
+    function hashCurrentSimulation() {
+        var data = JSON.stringify(
+            {
+                buildings,
+                tick: tick.value,
+            },
+            (_, v) => (typeof v === "bigint" ? v.toString() : v),
+        );
+        return data;
+    }
+
+    function makeSnapshot() {
+        let result: Snapshot = {
+            hash: hashCurrentSimulation(),
+            buildings: [],
+        };
+
+        for (let building of buildings) {
+            let data = building.Serialize();
+            let lanes = [];
+            for (let lane of building.GetLanes()) {
+                lanes.push(lane.Extra_Serialize());
+            }
+            result.buildings.push({
+                data,
+                lanes,
             });
         }
         return result;
@@ -103,6 +168,8 @@
     function nextTick(ticks: int = 1n) {
         snapshots.push(makeSnapshot());
         tick.value += Number(ticks);
+        window.tick = tick.value;
+
         for (var building of buildings) {
             building.OnUpdate(ticks);
         }
@@ -118,18 +185,42 @@
         if (snapshots.length == 0) {
             return;
         }
+        tick.value -= 1;
+        window.tick = tick.value;
+
         var snapshot = snapshots.pop()!;
-        for (var i = 0; i < lanes.length; ++i) {
-            var lane = lanes[i];
-            var data = snapshot[i];
-            lane.Item = data.item;
-            lane.Progress_T = data.progress_T;
-            lane.MaxStep_S = data.maxStep_S;
+        for (var i = 0; i < buildings.length; i++) {
+            var building = buildings[i];
+            var data = snapshot.buildings[i];
+            var lanes = building.GetLanes();
+            building.Deserialize(data.data);
+            for (var j = 0; j < lanes.length; j++) {
+                lanes[j].Extra_Deserialize(data.lanes[j]);
+            }
+        }
+        var newHash = hashCurrentSimulation();
+        if (newHash != snapshot.hash) {
+            console.error("SNAPSHOT MISMATCH:");
+            console.warn("OLD:", snapshot.hash);
+            console.warn("NEW:", newHash);
         }
     }
 
     function nextMaxTick() {
         nextTick(maxTicksPerFrame.value);
+    }
+
+    function unit2px(unit: int) {
+        return PIXEL_PER_STEP * Number(unit) + "px";
+    }
+
+    function buildingStyle(building: MapEntity) {
+        return {
+            width: unit2px(building.EffectiveDimensions.x),
+            height: unit2px(building.EffectiveDimensions.y),
+            left: unit2px(building.PosX + 2n),
+            top: unit2px(building.PosY + 2n),
+        };
     }
 
     function automaticTick() {

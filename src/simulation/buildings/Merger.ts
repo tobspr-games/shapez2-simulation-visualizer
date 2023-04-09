@@ -17,8 +17,20 @@ export class MergerEntity extends MapEntity {
     ];
     protected static OutputLaneDefinition: BeltLaneDefinition = new BeltLaneDefinition("MergerIn", 0.5, 0.5);
 
-    constructor(posX: int, posY: int, posXw: int, posYw: int) {
-        super();
+    public Serialize() {
+        return {
+            CurrentInputIndex: this.CurrentInputIndex,
+            NextPreferredInput: this.NextPreferredInput,
+        };
+    }
+
+    public Deserialize(data: any): void {
+        this.CurrentInputIndex = data.CurrentInputIndex;
+        this.NextPreferredInput = data.NextPreferredInput;
+    }
+
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
 
         // this.MainLane.PostAcceptHook = (lane, remainingTicks) => {
         //     lane.ClearLaneRaw_UNSAFE();
@@ -28,32 +40,14 @@ export class MergerEntity extends MapEntity {
         this.OutputLane = new BeltLane(
             "mergerOut",
             MergerEntity.OutputLaneDefinition,
-            posX + 10n,
-            posY,
-            posXw + 10n,
-            posYw,
+            MergerEntity.InputLaneDefinitions[0].Length_S,
+            0n,
             undefined,
         );
 
         this.InputLanes = [
-            new BeltLane(
-                "mergerIn0",
-                MergerEntity.InputLaneDefinitions[0],
-                posX,
-                posY,
-                posXw,
-                posYw,
-                this.OutputLane,
-            ),
-            new BeltLane(
-                "mergerIn1",
-                MergerEntity.InputLaneDefinitions[1],
-                posX,
-                posY + 6n,
-                posXw,
-                posYw + 6n,
-                this.OutputLane,
-            ),
+            new BeltLane("mergerIn0", MergerEntity.InputLaneDefinitions[0], 0n, 0n, this.OutputLane),
+            new BeltLane("mergerIn1", MergerEntity.InputLaneDefinitions[1], 0n, 6n, this.OutputLane),
         ];
 
         for (let i: int = 0n; i < this.InputLanes.length; ++i) {

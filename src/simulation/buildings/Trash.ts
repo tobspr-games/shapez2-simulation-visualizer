@@ -13,17 +13,9 @@ export class TrashEntity extends MapEntity {
         0.5,
     );
 
-    constructor(posX: int, posY: int, posXw: int, posYw: int) {
-        super();
-        this.MainLane = new BeltLane(
-            "trashMain",
-            TrashEntity.TrashInputDefinition,
-            posX,
-            posY,
-            posXw,
-            posYw,
-            undefined,
-        );
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
+        this.MainLane = new BeltLane("trashMain", TrashEntity.TrashInputDefinition, 0n, 0n);
 
         this.MainLane.PostAcceptHook = (lane, remainingTicks) => {
             lane.ClearLaneRaw_UNSAFE();

@@ -16,8 +16,20 @@ export class SplitterEntity extends MapEntity {
         new BeltLaneDefinition("SplitterOut1", 0.5, 0.5),
     ];
 
-    constructor(posX: int, posY: int, posXw: int, posYw: int) {
-        super();
+    public Serialize() {
+        return {
+            NextPreferredLane: this.NextPreferredLane,
+            InputNext: this.InputLane.NextLane?.Name,
+        };
+    }
+
+    public Deserialize(data: any): void {
+        this.NextPreferredLane = data.NextPreferredLane;
+        this.InputLane.NextLane = this.OutputLanes.find((l) => l.Name == data.InputNext);
+    }
+
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
 
         // this.MainLane.PostAcceptHook = (lane, remainingTicks) => {
         //     lane.ClearLaneRaw_UNSAFE();
@@ -27,30 +39,22 @@ export class SplitterEntity extends MapEntity {
             new BeltLane(
                 "splitterOut0",
                 SplitterEntity.OuputLaneDefinitions[0],
-                posX + 5n,
-                posY - 2n,
-                posXw + 10n,
-                posYw - 2n,
-                undefined,
+                SplitterEntity.InputLaneDefinition.Length_S,
+                0n,
             ),
             new BeltLane(
                 "splitterOut1",
                 SplitterEntity.OuputLaneDefinitions[1],
-                posX + 5n,
-                posY + 4n,
-                posXw + 10n,
-                posYw + 4n,
-                undefined,
+                SplitterEntity.InputLaneDefinition.Length_S,
+                7n,
             ),
         ];
 
         this.InputLane = new BeltLane(
             "splitterIn",
             SplitterEntity.InputLaneDefinition,
-            posX,
-            posY,
-            posXw,
-            posYw,
+            0n,
+            0n,
             this.OutputLanes[0],
         );
 

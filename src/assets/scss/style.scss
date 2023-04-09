@@ -41,6 +41,24 @@ h3 {
     margin: 10px 0;
 }
 
+.building {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    box-shadow: 0 0 0 2px red;
+    > .name {
+        position: absolute;
+        top: -20px;
+        color: red;
+        left: 0px;
+        font-size: 14px;
+    }
+}
+
 .beltLane {
     position: absolute;
     top: 100px;
@@ -51,17 +69,21 @@ h3 {
     border-radius: 3px;
     box-sizing: content-box;
     border: 1px solid #000;
+    margin-left: -1px;
+    margin-top: -1px;
 
     .tick {
         position: absolute;
         top: 20px;
-        border-left: 1px solid rgba(#fff, 0.8);
+        border-left: 1px solid rgba(#fff, 0.15);
         height: 60px;
-        padding-left: 3px;
+        padding-left: 5px;
+        padding-top: 3px;
+        box-sizing: border-box;
         font-size: 10px;
-        color: #fff;
+        color: rgba(#fff, 0.4);
         width: $pixelPerStep;
-        background: rgba(#fff, 0.1);
+        background: rgba(#fff, 0.05);
         overflow: visible;
         white-space: nowrap;
         z-index: 10;
@@ -98,12 +120,13 @@ h3 {
     .item {
         position: absolute;
         top: 38px;
-        margin-left: -1px;
+        margin-left: -3px;
         height: 20px;
 
         &.world {
             width: $pixelPerStep * $itemSize / 2;
             box-shadow: rgba(0, 255, 0, 0.3) (-$pixelPerStep * $itemSize / 2 + 5px) 0 0 0;
+            text-indent: -100px;
         }
 
         &.progress {
@@ -112,24 +135,25 @@ h3 {
         }
 
         transition: left 0.1s linear;
-        font-size: 12px;
-        background: rgba(39, 209, 39, 0.5);
+        font-size: 11px;
+        background: rgba(39, 209, 39, 0.5) url("@/assets/shape.png") right center / 20px 20px no-repeat;
         z-index: 200;
-        border-left: 2px solid rgb(0, 255, 0);
+        border-left: 6px solid #fff;
         border-top-right-radius: 0px;
         box-sizing: border-box;
         padding-left: 5px;
-        padding-top: 2px;
+        padding-top: 5px;
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
 
         $colors: red, green, blue, yellow, orange, red, green, blue, yellow, orange, red, green, blue, yellow,
             orange, red, green, blue, yellow, orange;
+
         @for $i from 0 through 19 {
             &.item-#{$i} {
                 $color: nth($colors, $i + 1);
-                border-left-color: $color;
-                background: rgba($color, 0.5);
+                // border-left-color: $color;
+                background-color: rgba($color, 0.5);
                 &.world {
                     box-shadow: rgba($color, 0.3) (-$pixelPerStep * $itemSize / 2 + 5px) 0 0 0;
                 }

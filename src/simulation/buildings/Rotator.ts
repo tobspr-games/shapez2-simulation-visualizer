@@ -17,34 +17,28 @@ export class RotatorEntity extends MapEntity {
     );
     protected static OutputDefinition: BeltLaneDefinition = new BeltLaneDefinition("RotatorOutput", 0.5, 0.5);
 
-    constructor(posX: int, posY: int, posXw: int, posYw: int) {
-        super();
+    constructor(posX: int, posY: int) {
+        super(posX, posY);
         this.OutputLane = new BeltLane(
             "rotatorOutput",
             RotatorEntity.InputDefinition,
-            posX + 10n,
-            posY,
-            posXw + 10n,
-            posYw,
+            RotatorEntity.InputDefinition.Length_S,
+            0n,
             undefined,
         );
         this.ProcessingLane = new BeltLane(
             "rotatorProcessing",
             RotatorEntity.ProcessingDefinition,
-            posX + 5n,
-            posY + 2n,
-            posXw + 10n,
-            posYw + 3n,
+            RotatorEntity.InputDefinition.Length_S,
+            3n,
             this.OutputLane,
         );
 
         this.InputLane = new BeltLane(
             "rotatorInput",
             RotatorEntity.OutputDefinition,
-            posX,
-            posY,
-            posXw,
-            posYw,
+            0n,
+            0n,
             this.ProcessingLane,
         );
     }
